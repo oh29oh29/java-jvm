@@ -32,6 +32,53 @@ javac 가 하는 일은 자바 소스 코드를 바이트코드로 된 .class �
 ![java실행](images/IMG_compile_03.png)  
 이렇게 컴파일된 .class 에 대하여 java 명령어를 사용하면 실행할 수 있다.  
 
+### 핫스팟 JVM
+
+자바는 썬 마이크로시스템즈가 개발했지만, JVM 명세를 따르기만 하면 어떤 회사에서든 JVM 을 개발하고 제공할 수 있다.  
+그중 하나인 JVM 으로 핫스팟 JVM 이 있다.  
+
+### JIT 컴파일
+
+자바 프로그램은 바이트코드 인터프리터가 가상화한 스택 머신에서 명령어를 실행하며 시작된다.  
+프로그램이 성능을 최대한 내려면 네이티브 기능을 활용해 CPU 에서 직접 프로그램을 실행시켜야 한다.  
+
+이를 위해 핫스팟은 프로그램 단위(메서드와 루프)를 인터프리티드 바이트코드에서 네이티브 코드로 컴파일한다.  
+바로 JIT(Just-in-Time) 컴파일이라고 알려진 기술이다.  
+
+핫스팟은 인터프리티드 모드로 실행하는 동안 애플리케이션을 모니터링하면서 가장 자주 실행되는 코드 파트를 발견해 JIT 컴파일을 수행한다.  
+이렇게 분석을 하는 동안 미리 프로그래밍한 추적 정보가 취합되면서 더 정교하게 최적화를 할 수 있다.
+
+### JVM 구성 요소
+
+![JVM 아키텍처](images/IMG_jvm_architecture_01.jpg)  
+
+#### Class Loader
+TBD
+
+#### Method Area
+TBD
+
+#### Heap
+TBD
+
+#### JVM Language Stacks
+TBD
+
+#### PC Registers
+TBD
+
+#### Native Method Stacks
+TBD
+
+#### Execution Engine
+TBD
+
+#### Native Method Interface
+TBD
+
+#### Native Method Libraries
+TBD
+
 ### 클래스로딩
 
 java HelloWorld 명령을 내려 자바 애플리케이션을 실행하면 OS는 가상 머신 프로세스(자바 바이너리)를 구동한다.  
@@ -53,28 +100,21 @@ java HelloWorld 명령을 내려 자바 애플리케이션을 실행하면 OS는
 클래스를 찾지 못한 클래스로더는 기본적으로 자신의 부모 클래스로더에게 대신 룩업을 넘기고,  
 이렇게 부모의 부모로 거슬러 올라가 결국 부트스트랩도 룩업하지 못하면 ClassNotFoundException 예외가 발생한다.
 
-### 핫스팟 JVM
-
-자바는 썬 마이크로시스템즈가 개발했지만, JVM 명세를 따르기만 하면 어떤 회사에서든 JVM 을 개발하고 제공할 수 있다.  
-그중 하나인 JVM 으로 핫스팟 JVM 이 있다.  
-
-### JIT 컴파일
-
-자바 프로그램은 바이트코드 인터프리터가 가상화한 스택 머신에서 명령어를 실행하며 시작된다.  
-프로그램이 성능을 최대한 내려면 네이티브 기능을 활용해 CPU 에서 직접 프로그램을 실행시켜야 한다.  
-
-이를 위해 핫스팟은 프로그램 단위(메서드와 루프)를 인터프리티드 바이트코드에서 네이티브 코드로 컴파일한다.  
-바로 JIT(Just-in-Time) 컴파일이라고 알려진 기술이다.  
-
-핫스팟은 인터프리티드 모드로 실행하는 동안 애플리케이션을 모니터링하면서 가장 자주 실행되는 코드 파트를 발견해 JIT 컴파일을 수행한다.  
-이렇게 분석을 하는 동안 미리 프로그래밍한 추적 정보가 취합되면서 더 정교하게 최정화를 할 수 있다.
-
+### JDK 와 JRE
+TBD
 
 ### JVM 메모리 관리
-TBD
+
+자바는 가비지 컬렉션(Garbage Collection, GC) 이라는 프로세스를 이용해 힙 메모리를 자동 관리한다.  
+가비지 컬렉션이란 JVM 이 더 많은 메모리를 할당해야 할 때 불필요한 메모리를 회수하거나 재사용하는 불확정적 프로세스이다.
+
+지금까지 많은 GC 알고리즘이 개발되었고 응용되었다.  
+GC가 실행되면 그동안 다른 애플리케이션은 모두 중단되고 하던 일은 멈춰야 한다.  
 
 ### GC
 TBD
 
+
 ##### 참고
-[Javatpoint](https://www.javatpoint.com/jvm-java-virtual-machine)
+[javatpoint | jvm-java-virtual-machine](https://www.javatpoint.com/jvm-java-virtual-machine)  
+[JVM | What is Java Virtual Machine & its Architecture](https://www.guru99.com/java-virtual-machine-jvm.html)
