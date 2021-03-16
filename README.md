@@ -4,17 +4,17 @@ Java Virtual Machine 의 약자.
 자바 바이트코드를 실행할 수 있는 런타임 환경을 제공한다.    
 보통 VM 스펙이라고 하는 자바 가상 머신을 규정한 명세서에 따르면 JVM은 스택 기반의 해석 머신이다.
 
-### 두 가지 특징
+## 두 가지 특징
 JVM은 자바 프로그램이 어느 기기 또는 운영체제 상에서도 실행될 수 있게 한다.  
 프로그램 메모리를 관리하고 최적화하는 기능을 제공한다.  
 
-### 바이트코드란?
+## 바이트코드란?
 
 자바 바이트코드(Java bytecode)란 JVM 이 이해할 수 있는 언어로 변환된 자바 소스 코드를 의미한다.  
 자바 컴파일러에 의해 변환되는 코드의 명령어 크기가 1바이트라서 자바 바이트코드라고 불리고 있다.  
 이런 자바 바이트코드의 확장자는 .class 이다.
 
-### 바이트코드 실행
+## 바이트코드 실행
 
 자바 컴파일러 javac 를 이용해 컴파일을 한다.  
 javac 가 하는 일은 자바 소스 코드를 바이트코드로 된 .class 파일로 바꾸는 일이다.  
@@ -32,12 +32,12 @@ javac 가 하는 일은 자바 소스 코드를 바이트코드로 된 .class �
 ![java실행](images/IMG_compile_03.png)  
 이렇게 컴파일된 .class 에 대하여 java 명령어를 사용하면 실행할 수 있다.  
 
-### 핫스팟 JVM
+## 핫스팟 JVM
 
 자바는 썬 마이크로시스템즈가 개발했지만, JVM 명세를 따르기만 하면 어떤 회사에서든 JVM 을 개발하고 제공할 수 있다.  
 그중 하나인 JVM 으로 핫스팟 JVM 이 있다.  
 
-### JIT 컴파일
+## JIT 컴파일
 
 자바 프로그램은 바이트코드 인터프리터가 가상화한 스택 머신에서 명령어를 실행하며 시작된다.  
 프로그램이 성능을 최대한 내려면 네이티브 기능을 활용해 CPU 에서 직접 프로그램을 실행시켜야 한다.  
@@ -48,16 +48,17 @@ javac 가 하는 일은 자바 소스 코드를 바이트코드로 된 .class �
 핫스팟은 인터프리티드 모드로 실행하는 동안 플리케이션을 모니터링하면서 가장 자주 실행되는 코드 파트를 발견해 JIT 컴파일을 수행한다.  
 이렇게 분석을 하는 동안 미리 프로그래밍한 추적 정보가 취합되면서 더 정교하게 최적화를 할 수 있다.
 
-### JVM 구성 요소
+## JVM 구성 요소
 
 ![JVM 아키텍처](images/IMG_jvm_architecture_01.jpg)  
 
-#### Class Loader
+### Class Loader
 클래스로더는 런타임 중에 자바 클래스 파일을 JVM 에 동적으로 로드하는 데 사용되는 하위 시스템이다.  
 또한 JRE 의 일부이기도 하다. 따라서 클래스로더 덕분에 JVM 은 자바 애플리케이션을 실행하기 위한 기본 파일이나 파일 시스템에 대해 알 필요가 없다.  
 
-자바 클래스는 한 번에 모두 메모리에 로드되는것이 아니라 플리케이션에서 필요로 할 때 로드된다.
+자바 클래스는 한 번에 모두 메모리에 로드되는것이 아니라 애플리케이션에서 필요로 할 때 로드된다.
 
+기본적으로 세 가지의 클래스로더가 존재한다. 부트스트랩 클래스로더, 확장 클래스로더, 애플리케이션 클래스로더.  
 다음은 다양한 클래스가 어떤 클래스로더들을 사용하여 로드되어지는지 간단한 예제이다.  
 
 ![클래스로더 확인 코드](images/IMG_classloader_01.png)  
@@ -67,29 +68,20 @@ javac 가 하는 일은 자바 소스 코드를 바이트코드로 된 .class �
 직접 생성한 ClassLoaderTest 클래스는 애플리케이션 클래스로더가 사용되었고, String 클래스는 부트스트랩 클래스로더가 사용된 것을 알 수 있다.  
 이외 확장 클래스로더도 존재하는데, 알맞은 클래스를 찾지 못해 예제에 구현은 해보지 못했다. 추후 알게되면 추가할 예정이다.  
 
-#### Method Area
-TBD
+#### 부트스트랩 클래스로더
 
-#### Heap
-TBD
+Primordial 클래스로더라고도 불리며, 세 가지 클래스로더 중 최상위 클래스로더이다.  
+JDK 내부 클래스들을 로드하는 일을 하며, 일반적으로 rt.jar 와 $JAVA_HOME/jre/lib 디렉토리에 존재하는 코어 라이브러리들을 로드한다.  
+또한, 코어 JVM 의 일부이며 네이티브 코드로 구현되었다.
 
-#### JVM Language Stacks
-TBD
+#### 확장 클래스로더
 
-#### PC Registers
-TBD
+부트스트랩 클래스로더의 하위 클래스로더이며, 표준 코어 자바 클래스들을 확장한 클래스들을 로드한다.
+일반적으로 $JAVA_HOME/lib/ext 디렉토리 또는 java.ext.dirs 시스템 속성으로 지정된 경로의 디렉토리에 속한 클래스들을 로드한다.
 
-#### Native Method Stacks
-TBD
+#### 애플리케이션 클래스로더
 
-#### Execution Engine
-TBD
-
-#### Native Method Interface
-TBD
-
-#### Native Method Libraries
-TBD
+확장 클래스로더의 하위 클래스로더이며, classpath 환경 변수, -classpath 또는 -cp 명령어로 찾은 클래스들을 로드한다.
 
 ### 클래스로딩
 
@@ -112,10 +104,42 @@ java HelloWorld 명령을 내려 자바 애플리케이션을 실행하면 OS는
 클래스를 찾지 못한 클래스로더는 기본적으로 자신의 부모 클래스로더에게 대신 룩업을 넘기고,  
 이렇게 부모의 부모로 거슬러 올라가 결국 부트스트랩도 룩업하지 못하면 ClassNotFoundException 예외가 발생한다.
 
-### JDK 와 JRE
+### Method Area
+
+런타임 상수 풀, 메서드의 코드와 같은 클래스 별 구조를 저장한다.
+
+### Heap
 TBD
 
-### JVM 메모리 관리
+### JVM Language Stacks
+TBD
+
+### PC Registers
+TBD
+
+### Native Method Stacks
+TBD
+
+### Execution Engine
+TBD
+
+### Native Method Interface
+TBD
+
+### Native Method Libraries
+TBD
+
+## JDK 와 JRE
+
+JRE (Java Runtime Environment)  
+- 컴파일된 자바 애플리케이션을 실행시킬 수 있는 자바 환경
+- JVM 이 자바 애플리케이션을 동작시킬 때 필요한 라이브러리 파일들과 기타 파일들을 갖고 있다.
+
+JDK (Java Development Kit)
+- 개발을 위해 필요한 도구(javac, java 등등)들을 포함한다.  
+- JRE 도 포함되어 있다.
+
+## JVM 메모리 관리
 
 자바는 가비지 컬렉션(Garbage Collection, GC) 이라는 프로세스를 이용해 힙 메모리를 자동 관리한다.  
 가비지 컬렉션이란 JVM 이 더 많은 메모리를 할당해야 할 때 불필요한 메모리를 회수하거나 재사용하는 불확정적 프로세스이다.
@@ -123,11 +147,11 @@ TBD
 지금까지 많은 GC 알고리즘이 개발되었고 응용되었다.  
 GC가 실행되면 그동안 다른 애플리케이션은 모두 중단되고 하던 일은 멈춰야 한다.  
 
-### GC
+## GC
 TBD
 
 
-##### 참고
+#### 참고
 [javatpoint | jvm-java-virtual-machine](https://www.javatpoint.com/jvm-java-virtual-machine)  
 [JVM | What is Java Virtual Machine & its Architecture](https://www.guru99.com/java-virtual-machine-jvm.html)  
 [Baeldung | Class Loaders in Java](https://www.baeldung.com/java-classloaders)  
