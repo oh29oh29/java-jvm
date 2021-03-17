@@ -106,28 +106,27 @@ java HelloWorld 명령을 내려 자바 애플리케이션을 실행하면 OS는
 
 ### Method Area
 
-런타임 상수 풀, 메서드의 코드와 같은 클래스 별 구조를 저장한다.
+런타임 상수 풀, 메서드의 코드와 같은 클래스 별 구조를 저장한다.  
+모든 쓰레드에서 공유한다.
 
 ### Heap
-TBD
+힙은 런타임 데이터 영역으로 생성된 객체와 그 객체들과 관련된 인스턴스 변수들 그리고 배열들이 힙에 저장된다.  
+모든 쓰레드에서 공유한다.  
+힙에서 저장하고 있는 객체들은 GC 에 의해 자동으로 관리된다. 
 
 ### JVM Language Stacks
-TBD
+각 쓰레드가 생성될 때 동시에 생성되는 자체 메모리 영역으로, 메서드의 결과와 반환값을 저장하거나 지역변수를 저장하는 용도로 쓰인다.  
 
 ### PC Registers
-TBD
+현재 실행중인 JVM 명령어의 주소를 저장한다.  
+각 쓰레드마다 별도의 PC 레지스터가 존재한다.  
 
 ### Native Method Stacks
-TBD
+자바 이외의 네이티브 언어로 작성된 코드를 저장한다.  
 
 ### Execution Engine
-TBD
-
-### Native Method Interface
-TBD
-
-### Native Method Libraries
-TBD
+클래스로더를 통해 JVM 메모리 영역에 배치된 바이트코드들을 명령어 단위로 읽어들여서 실행한다.  
+JIT 컴파일이 바로 이곳에서 이루어진다.
 
 ## JDK 와 JRE
 
@@ -147,13 +146,76 @@ JDK (Java Development Kit)
 지금까지 많은 GC 알고리즘이 개발되었고 응용되었다.  
 GC가 실행되면 그동안 다른 애플리케이션은 모두 중단되고 하던 일은 멈춰야 한다.  
 
-## GC
-TBD
+JVM 메모리 관리의 근간을 형성하는 약한 세대별 가설(Weak Generational Hypothesis) 가 있다.  
+- 대부분의 객체는 금방 접근 불가능 상태(unreachable)가 된다.
+- 오래된 객체에서 젊은 객체로의 참조는 아주 적게 존재한다.
+
+이 가설의 장점을 살리기 위해 핫스팟 JVM 에서는 메모리의 물리적 공간을 2개로 나누었다.
+
+Young Generation 영역
+- 새롭게 생성한 객체의 대부분이 위치하며, 대부분의 객체가 금방 접근 불가능 상태가 되기 때문에 많은 객체가 Young 영역에 생성되었다가 사라진다.
+- 이 영역에서 객체가 사라질 때 Minor GC 가 발생한다고 말한다.
+
+Old Generation 영역
+- Young Generation 영역에서 접근 불가능 상태로 되지 않아 살아남은 객체가 복사된다.
+- 이 영역에서 객체가 사라질 때 Major GC(또는 Full GC) 가 발생한다고 말한다.
+
+## Garbage Collection
+
+가비지 컬렉션은 JVM 힙 메모리 영역에서 사용 가능한 모든 객체를 추적하고 쓸모없어진 객체를 제거하는 역할을 맡고있다.
+
+가비지 컬렉션 구현체는 반드시 두 가지 원칙을 준수해야 한다.
+1. 알고리즘은 반드시 모든 가비지를 수잽해야 한다.
+2. 사용중인 객체는 절대로 수집해선 안된다.  
+
+일반적으로 가비지 컬렉션은 마크 앤 스위프(mark and sweep) 알고리즘을 기본으로 한다. 
+Mark: 사용중인 객체와 그렇지 않은 객체를 식별한다.  
+Sweep: Mark 단계에서 식별된 쓸모없어진 객체를 메모리에서 제거한다.  
+
+#### Stop-The-World
+
+GC 사이클이 발생하여 가비지를 수집하는 동안에는 모든 애플리케이션 쓰레드가 중단된다.
+
+#### GC 종류
+
+Serial GC
+- 가장 단순한 GC 로 싱글 쓰레드로 동작한다. 따라서 Serial GC 가 수행되는 동안 다른 쓰레드들은 멈춘다.
+- 따라서, 서버 환경과 같은 멀티 쓰레드 애플리케이션에서는 사용하지 않는다.
+- Mark-Sweep-Compaction 알고리즘을 사용한다.
+
+Parallel GC
+- JVM 의 기본 GC 이며 멀티 쓰레드로 동작하는 GC 이다. 하지만 Parallel GC 역시 수행되는 동안 다른 쓰레드들은 멈춘다.
+- Serial GC 보다 속도가 빠른 장점이 있고 머리 쓰레드 애플리케이션에 적합하다.
+- Serail GC 와 마찬가지로 Mark-Sweep-Compaction 알고리즘을 사용한다.
+
+Parallel Old GC
+- Parallel GC 를 조금 더 개선한 GC 이다.
+- Mark-Sweep-Compaction 알고리즘보다 더 개선된 Mark-Summary-Compaction 알고리즘을 사용하며, Summary 단계에서는 이미 GC 가 수행된 영역에서 살아있는 객체를 식별하는 작업을 진행한다는 점이 Sweep 과 다르다. 
+
+CMS(Concurrent Mark Sweep) GC
+- STW 시간을 아주 짧게 하려고 설계된 Old Generation 전용 GC 이다.
+- 중단 시간을 최소화하기 위해 애플리케이션 쓰레드 실행 중에 가급적 많은 일을 한다.
+- CMS GC 수행에는 4단계가 존재한다.
+    - Initial Mark: 클래스로더에서 가장 가까운 객체 중 살아 있는 개체만 찾는다.
+    - Concurrent Mark: 방금 살아있다고 확인한 객체에서 참조하고 있는 객체들을 따라가면서 확인한다. 다른 쓰레드가 실행 중인 상태에서 동시에 진행된다.
+    - Remark: Concurrent Mark 단계에서 새로 추가되거나 참조가 끊긴 객체를 확인한다.
+    - Concurrent Sweep: 가비지를 정리한다. 이 단계에서도 다른 쓰레드가 실행 중인 상태에서 동시에 진행된다.
+- 위와 같은 단계로 진행되기 때문에 STW 시간이 매우 짧아 애플리케이션의 응답 속도가 매우 중요할 때 사용하는 GC 이다.
+- 반면 다른 GC 방식보다 CPU 와 메모리를 더 많이 사용하며, Compaction 단계가 기본적으로 제공되지 않는다는 단점이 있다.
+- 자바 9 부터는 CMS GC 를 더이상 사용되지 않는다. (그 이유는 좀 더 찾아보고 추가할 예정)
+
+G1(Garbage First) GC
+- 임의의 바둑판의 각 영역에 객체를 할당하고 GC 를 수행한다. 해당 바둑판 영역이 가득차면 다른 영역에서 객체를 할당하고 GC 를 수행한다.
+- CMS GC 를 대체하기 위해서 만들어졌다.
+- 위에서 나열한 GC 방식보다 빠르다.
 
 
-#### 참고
-[javatpoint | jvm-java-virtual-machine](https://www.javatpoint.com/jvm-java-virtual-machine)  
-[JVM | What is Java Virtual Machine & its Architecture](https://www.guru99.com/java-virtual-machine-jvm.html)  
-[Baeldung | Class Loaders in Java](https://www.baeldung.com/java-classloaders)  
-[자바 최적화](http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&ejkGb=KOR&barcode=9791162241776&orderClick=LA6)
+> 웹 문서
+> - [javatpoint | jvm-java-virtual-machine](https://www.javatpoint.com/jvm-java-virtual-machine)
+> - [JVM | What is Java Virtual Machine & its Architecture](https://www.guru99.com/java-virtual-machine-jvm.html)
+> - [Baeldung | Class Loaders in Java](https://www.baeldung.com/java-classloaders)
+> - [JVM 메모리 구조와 GC](https://johngrib.github.io/wiki/jvm-memory/)
+>
+> 도서
+> - [자바 최적화](http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&ejkGb=KOR&barcode=9791162241776&orderClick=LA6)
 
