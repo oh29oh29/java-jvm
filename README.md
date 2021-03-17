@@ -165,10 +165,10 @@ Old Generation 영역
 가비지 컬렉션은 JVM 힙 메모리 영역에서 사용 가능한 모든 객체를 추적하고 쓸모없어진 객체를 제거하는 역할을 맡고있다.
 
 가비지 컬렉션 구현체는 반드시 두 가지 원칙을 준수해야 한다.
-1. 알고리즘은 반드시 모든 가비지를 수잽해야 한다.
+1. 알고리즘은 반드시 모든 가비지를 수집해야 한다.
 2. 사용중인 객체는 절대로 수집해선 안된다.  
 
-일반적으로 가비지 컬렉션은 마크 앤 스위프(mark and sweep) 알고리즘을 기본으로 한다. 
+일반적으로 가비지 컬렉션은 마크 앤 스위프(mark and sweep) 알고리즘을 기본으로 한다.  
 Mark: 사용중인 객체와 그렇지 않은 객체를 식별한다.  
 Sweep: Mark 단계에서 식별된 쓸모없어진 객체를 메모리에서 제거한다.  
 
@@ -215,6 +215,7 @@ G1(Garbage First) GC
 > - [JVM | What is Java Virtual Machine & its Architecture](https://www.guru99.com/java-virtual-machine-jvm.html)
 > - [Baeldung | Class Loaders in Java](https://www.baeldung.com/java-classloaders)
 > - [JVM 메모리 구조와 GC](https://johngrib.github.io/wiki/jvm-memory/)
+> - [Naver D2 Java Garbage Collection](https://d2.naver.com/helloworld/1329)
 >
 > 도서
 > - [자바 최적화](http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&ejkGb=KOR&barcode=9791162241776&orderClick=LA6)
